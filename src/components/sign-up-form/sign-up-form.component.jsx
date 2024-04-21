@@ -9,6 +9,8 @@ import {
 
 import FormInput from "../form-input/form-input.component";
 
+import "./sign-up-form.styles.scss";
+
 const defaultFormFields = {
   displayName: "",
   email: "",
@@ -60,8 +62,9 @@ const SignUpForm = () => {
   };
 
   return (
-    <div>
-      <h1>Sign up with email and password</h1>
+    <div className="sign-up-container">
+      <h2>Don&apos;t have an account yet?</h2>
+      <span>Sign up with email and password</span>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormInput
           label="Display Name"

@@ -31,14 +31,14 @@ $main-color: black;
     letter-spacing: 0.3em;
   }
   .form-input-label {
-    color: $main-color;
+    color: $sub-color;
     font-size: 16px;
     font-weight: normal;
     position: absolute;
     pointer-events: none;
     left: 5px;
     top: 10px;
-    transition: font-size 300ms ease, color 300ms ease; /* Exclude top property from transition */
+    transition: 300ms ease all;
     &.shrink {
       @include shrinkLabel();
     }
