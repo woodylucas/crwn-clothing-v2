@@ -1,6 +1,4 @@
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 import {
   createAuthUserWithEmailAndPassword,
@@ -19,28 +17,13 @@ const defaultFormFields = {
   confirmPassword: "",
 };
 
-const signUpSchema = z.object({
-  displayName: z
-    .string()
-    .min(6, "Display name must be at least 6 characters long"),
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters long"),
-  confirmPassword: z
-    .string()
-    .refine((value, { password }) => value === password, {
-      message: "Passwords do not match",
-      path: ["confirmPassword"],
-    }),
-});
-
 const SignUpForm = () => {
-  const { handleSubmit, watch, register, reset } = useForm({
-    defaultValues: defaultFormFields,
-    resolver: zodResolver(signUpSchema),
-  });
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { displayName, email, password, confirmPassword } = formFields;
 
-  const onSubmit = async (data) => {
-    const { displayName, email, password, confirmPassword } = data;
+  const handleSubmit = async (evt) => {
+    evt.preventDefault();
+
     if (password !== confirmPassword) {
       alert("passwords do no match");
       return;
@@ -52,7 +35,6 @@ const SignUpForm = () => {
       );
 
       await createUserDocumentFromAuth(user, { displayName });
-      reset();
     } catch (error) {
       if (error.code === "auth/email-already-in-use") {
         alert("Cannot create user, email already in use ");
@@ -60,42 +42,53 @@ const SignUpForm = () => {
         console.log("user creation encountered an error", error);
       }
     }
+    setFormFields(defaultFormFields);
+  };
+
+  // const handleReset = () => {
+  //   setFormFields(defaultFormFields);
+  // };
+
+  const handleChange = (evt) => {
+    const { value, name } = evt.target;
+
+    setFormFields((prevFormFields) => ({ ...prevFormFields, [name]: value }));
   };
 
   return (
     <div className="sign-up-container">
       <h2>Don&apos;t have an account yet?</h2>
       <span>Sign up with email and password</span>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit}>
         <FormInput
           label="Display Name"
           type="text"
           name="displayName"
-          register={register}
-          watch={watch}
+          value={displayName}
+          onChange={handleChange}
         />
 
         <FormInput
           label="Email"
           type="text"
           name="email"
-          register={register}
-          watch={watch}
+          value={email}
+          onChange={handleChange}
         />
         <FormInput
           label="Password"
           type="password"
           name="password"
-          register={register}
-          watch={watch}
+          value={password}
+          onChange={handleChange}
         />
 
         <FormInput
           label="Confirm Password"
           type="password"
           name="confirmPassword"
-          register={register}
-          watch={watch}
+          value={confirmPassword}
+          onChange={handleChange}
         />
         <Button type="submit">Sign Up</Button>
       </form>
